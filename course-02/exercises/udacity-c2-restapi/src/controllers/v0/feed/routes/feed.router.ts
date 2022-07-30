@@ -18,14 +18,68 @@ router.get('/', async (req: Request, res: Response) => {
 
 //@TODO
 //Add an endpoint to GET a specific resource by Primary Key
+router.get('/find/:id',async (req: Request, res: Response) => {
+    let { id } = req.params;
 
-// update a specific resource
-router.patch('/:id', 
-    requireAuth, 
-    async (req: Request, res: Response) => {
-        //@TODO try it yourself
-        res.status(500).send("not implemented")
+    // check to make sure the id is set
+    if (!id) { 
+        // respond with an error if not
+        return res.status(400).send(`id is required`);
+      }
+
+      
+      FeedItem.findByPk(id)
+        .then(data => {
+          if (data) {
+            res.send(data);
+          } else {
+            res.status(404).send({
+              message: `Cannot find Resource with id=${id}.`
+            });
+          }
+        })
+        .catch(err => {
+          res.status(500).send({
+          message: "Error retrieving Resource with id=" + id
+        });
+      });
 });
+// update a specific resource
+// router.patch('/update/:id', 
+//     requireAuth, 
+//     async (req: Request, res: Response) => {
+//         //@TODO try it yourself
+//         let { id } = req.params;
+
+//         // check to make sure the id is set
+//         if (!id) { 
+//             // respond with an error if not
+//             return res.status(400).send(`id is required`);
+//           }
+
+
+//   FeedItem.update(req.params, {
+//     where: { id: id }
+//   })
+//             .then(data => {
+//               if (data) {
+//                 res.status(200).send({
+//                     message: `Updated Resource with id=${id}.`
+//                   });
+//               } else {
+//                 res.status(404).send({
+//                   message: `Cannot find Resource with id=${id}.`
+//                 });
+//               }
+//             })
+//             .catch(err => {
+//               res.status(500).send({
+//               message: "Error retrieving Resource with id=" + id
+//             });
+//           });
+
+        //res.status(500).send("not implemented")
+//});
 
 
 // Get a signed url to put a new item in the bucket
